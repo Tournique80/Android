@@ -2,8 +2,18 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Para Liliana 💕</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c9184a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Liliana 💕">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
 <style>
   :root{
     --pink: #ff8fab;
@@ -168,10 +178,40 @@
 
     <button class="btn" onclick="revealMessage()">Presiona aquí 🌷</button>
     <div class="reveal" id="revealText"></div>
+
+    <button class="btn install-btn" id="installBtn" style="display:none; background:linear-gradient(135deg, #6b8f4e, #9dc88d);">
+      📲 Instalar app
+    </button>
   </div>
 
   <footer>Hecho con amor para Liliana Figuera</footer>
 </div>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'inline-block';
+  });
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  });
+  window.addEventListener('appinstalled', () => {
+    installBtn.style.display = 'none';
+  });
+</script>
 
 <script>
   const heartsContainer = document.getElementById('hearts');
